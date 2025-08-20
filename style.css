@@ -63,7 +63,7 @@ body {
 }
 
 .tool-btn {
-    background: #333;
+    background: linear-gradient(145deg, #333, #222);
     border: 2px solid #555;
     border-style: outset;
     color: white;
@@ -75,28 +75,38 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
+    transition: all 0.1s ease;
+    position: relative;
+    border-radius: 2px;
 }
 
 .tool-btn:hover {
-    background: #444;
+    background: linear-gradient(145deg, #444, #333);
     border-style: inset;
+    transform: scale(1.05);
+    box-shadow: 
+        inset 1px 1px 3px rgba(0,0,0,0.5),
+        0 0 10px rgba(255,255,255,0.1);
 }
 
 .tool-btn.active {
-    background: #555;
+    background: linear-gradient(145deg, #555, #444);
     border: 2px solid #00ff00;
     border-style: inset;
-    box-shadow: inset 0 0 6px #00ff0088;
+    box-shadow: 
+        inset 0 0 6px rgba(0,255,0,0.4),
+        0 0 15px rgba(0,255,0,0.3);
+    transform: scale(0.98);
 }
 
 .element-btn {
-    background: #444;
+    background: linear-gradient(145deg, #444, #333);
     border: 2px solid #666;
     border-style: outset;
     color: white;
     padding: 6px 4px;
     cursor: pointer;
-    transition: none;
+    transition: all 0.1s ease;
     font-size: 9px;
     font-family: 'Press Start 2P', monospace;
     text-align: center;
@@ -104,24 +114,49 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.element-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+    transition: left 0.3s ease;
 }
 
 .element-btn:hover {
-    background: #555;
+    background: linear-gradient(145deg, #555, #444);
     border-style: inset;
+    transform: translateY(1px);
+    box-shadow: 
+        inset 1px 1px 3px rgba(0,0,0,0.5),
+        0 0 8px rgba(255,255,255,0.1);
+}
+
+.element-btn:hover::before {
+    left: 100%;
 }
 
 .element-btn:active {
-    background: #333;
+    background: linear-gradient(145deg, #333, #222);
     border-style: inset;
+    transform: translateY(2px);
 }
 
 .element-btn.active {
-    background: #666;
-    border: 2px solid #ffff00;
+    background: linear-gradient(145deg, #666, #555);
+    border: 2px solid #00ff00;
     border-style: inset;
-    color: #ffff00;
-    box-shadow: inset 0 0 8px #ffff0088;
+    box-shadow: 
+        inset 0 0 8px rgba(0,255,0,0.3),
+        0 0 12px rgba(0,255,0,0.2);
+    color: #00ff00;
+    text-shadow: 0 0 6px rgba(0,255,0,0.5);
 }
 
 .controls {
@@ -133,25 +168,49 @@ body {
 }
 
 .controls button {
-    background: #444;
+    background: linear-gradient(145deg, #444, #333);
     border: 2px solid #666;
     border-style: outset;
     color: white;
-    padding: 6px 12px;
+    padding: 8px 16px;
     cursor: pointer;
     font-family: 'Press Start 2P', monospace;
     font-size: 8px;
     min-height: 32px;
+    transition: all 0.1s ease;
+    border-radius: 3px;
+    position: relative;
+    overflow: hidden;
+}
+
+.controls button::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+    transition: left 0.3s ease;
 }
 
 .controls button:hover {
-    background: #555;
+    background: linear-gradient(145deg, #555, #444);
     border-style: inset;
+    transform: translateY(1px);
+    box-shadow: 
+        inset 1px 1px 3px rgba(0,0,0,0.5),
+        0 0 8px rgba(255,255,255,0.1);
+}
+
+.controls button:hover::before {
+    left: 100%;
 }
 
 .controls button:active {
-    background: #333;
+    background: linear-gradient(145deg, #333, #222);
     border-style: inset;
+    transform: translateY(2px);
 }
 
 .controls label {
@@ -179,19 +238,47 @@ body {
     image-rendering: pixelated;
     image-rendering: -moz-crisp-edges;
     image-rendering: crisp-edges;
+    border-radius: 4px;
     box-shadow: 
-        inset 2px 2px 0px #333,
-        inset -2px -2px 0px #999,
-        4px 4px 0px #000000;
+        inset 3px 3px 0px #333,
+        inset -3px -3px 0px #999,
+        0 4px 20px rgba(0,0,0,0.5),
+        0 0 30px rgba(0,255,0,0.05);
+    transition: box-shadow 0.3s ease;
+}
+
+#gameCanvas:hover {
+    box-shadow: 
+        inset 3px 3px 0px #333,
+        inset -3px -3px 0px #999,
+        0 4px 20px rgba(0,0,0,0.5),
+        0 0 40px rgba(0,255,0,0.1);
 }
 
 .info {
     margin-top: 12px;
     text-align: center;
     font-size: 8px;
-    color: #aaaaaa;
-    line-height: 1.6;
-    max-width: 600px;
+    color: #cccccc;
+    background: linear-gradient(135deg, #1a1a1a, #252525);
+    border: 2px solid #444;
+    border-radius: 6px;
+    padding: 12px;
+    box-shadow: 
+        inset 1px 1px 0px #333,
+        inset -1px -1px 0px #111,
+        0 2px 10px rgba(0,0,0,0.3);
+}
+
+.info p {
+    margin: 4px 0;
+    line-height: 1.4;
+    padding: 2px 0;
+}
+
+.info strong {
+    color: #00ff00;
+    text-shadow: 0 0 4px rgba(0,255,0,0.3);
 }
 
 .info p {
@@ -202,17 +289,31 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-top: 8px;
-    padding: 6px 12px;
-    background: #1a1a1a;
-    border: 2px inset #333;
+    margin-top: 12px;
+    padding: 8px 16px;
+    background: linear-gradient(135deg, #1a1a1a, #252525);
+    border: 2px solid #333;
+    border-radius: 6px;
     font-size: 8px;
     color: #00ff00;
+    box-shadow: 
+        inset 1px 1px 0px #333,
+        inset -1px -1px 0px #111,
+        0 2px 8px rgba(0,0,0,0.3);
 }
 
 .status-bar span {
     flex: 1;
     text-align: center;
+    padding: 2px 4px;
+    text-shadow: 0 0 3px rgba(0,255,0,0.3);
+    transition: all 0.2s ease;
+}
+
+.status-bar span:hover {
+    color: #00ccff;
+    text-shadow: 0 0 6px rgba(0,204,255,0.5);
+    transform: scale(1.05);
 }
 
 #brushSizeValue {
@@ -229,7 +330,8 @@ body {
 @media (max-width: 900px) {
     .container {
         margin: 8px;
-        padding: 12px;
+        padding: 16px;
+        border-radius: 6px;
     }
     
     #gameCanvas {
@@ -241,25 +343,144 @@ body {
     .element-buttons {
         grid-template-columns: repeat(3, 1fr);
         gap: 6px;
-        max-width: 240px;
+        max-width: 280px;
     }
     
     .element-btn {
-        padding: 6px 2px;
-        font-size: 8px;
-        min-height: 36px;
+        padding: 8px 4px;
+        font-size: 7px;
+        min-height: 40px;
+    }
+    
+    .toolbar h1 {
+        font-size: 14px;
+        margin-bottom: 16px;
+    }
+    
+    .controls button {
+        padding: 6px 10px;
+        font-size: 6px;
+        min-height: 28px;
+    }
+    
+    .tool-btn {
+        min-height: 28px;
+        min-width: 28px;
+        font-size: 12px;
+    }
+    
+    .info {
+        font-size: 7px;
+        padding: 10px;
+    }
+    
+    .status-bar {
+        font-size: 7px;
+        padding: 6px 12px;
+    }
+    
+    .developer-credit {
+        padding: 6px;
+    }
+    
+    .developer-credit span {
+        font-size: 7px;
+    }
+}
+
+@media (max-width: 600px) {
+    .container {
+        margin: 4px;
+        padding: 12px;
     }
     
     .toolbar h1 {
         font-size: 12px;
     }
     
-    .controls button {
-        padding: 4px 8px;
-        font-size: 6px;
+    .element-buttons {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 4px;
+        max-width: 200px;
     }
     
-    .info {
+    .element-btn {
         font-size: 6px;
+        min-height: 36px;
+        padding: 6px 2px;
+    }
+    
+    .controls {
+        gap: 4px;
+    }
+    
+    .controls button {
+        font-size: 5px;
+        padding: 4px 8px;
+        min-height: 24px;
+    }
+    
+    .tool-btn {
+        min-height: 24px;
+        min-width: 24px;
+        font-size: 10px;
+    }
+}
+
+/* Developer Credit Footer */
+.developer-credit {
+    margin-top: 12px;
+    padding: 8px;
+    text-align: center;
+    background: linear-gradient(45deg, #1a1a1a, #2a2a2a);
+    border: 2px solid #444;
+    border-radius: 4px;
+    box-shadow: inset 1px 1px 0px #555, inset -1px -1px 0px #111;
+}
+
+.developer-credit span {
+    font-size: 8px;
+    color: #00ccff;
+    text-shadow: 1px 1px 0px #004466;
+    letter-spacing: 1px;
+}
+
+/* Enhanced UI Improvements */
+.container {
+    background: linear-gradient(135deg, #2a2a2a, #1f1f1f);
+    border: 4px solid #555;
+    border-style: outset;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 
+        inset 2px 2px 0px #404040,
+        inset -2px -2px 0px #1a1a1a,
+        6px 6px 20px rgba(0,0,0,0.5),
+        0 0 30px rgba(0,255,0,0.1);
+    backdrop-filter: blur(2px);
+}
+
+.toolbar h1 {
+    margin-bottom: 20px;
+    font-size: 18px;
+    color: #00ff00;
+    text-shadow: 
+        2px 2px 0px #008800,
+        0 0 10px rgba(0,255,0,0.3);
+    letter-spacing: 3px;
+    animation: glow 2s ease-in-out infinite alternate;
+}
+
+@keyframes glow {
+    from {
+        text-shadow: 
+            2px 2px 0px #008800,
+            0 0 10px rgba(0,255,0,0.3);
+    }
+    to {
+        text-shadow: 
+            2px 2px 0px #008800,
+            0 0 20px rgba(0,255,0,0.6),
+            0 0 30px rgba(0,255,0,0.4);
     }
 }

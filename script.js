@@ -15,7 +15,7 @@ class PhysicsSandbox {
             empty: { color: [0, 0, 0, 0], density: 0, flammable: false, liquid: false, gas: false, solid: false },
             dirt: { color: [101, 67, 33, 255], density: 1.5, flammable: false, liquid: false, gas: false, solid: false },
             water: { color: [64, 164, 223, 200], density: 1.0, flammable: false, liquid: true, gas: false, solid: false },
-            fire: { color: [255, 100, 0, 255], density: 0.01, flammable: false, liquid: false, gas: true, solid: false, lifetime: 15 },
+            fire: { color: [255, 100, 0, 255], density: 0.01, flammable: false, liquid: false, gas: true, solid: false, lifetime: 8 },
             plant: { color: [34, 139, 34, 255], density: 0.8, flammable: true, liquid: false, gas: false, solid: true },
             stone: { color: [128, 128, 128, 255], density: 2.7, flammable: false, liquid: false, gas: false, solid: true },
             sand: { color: [238, 203, 173, 255], density: 1.6, flammable: false, liquid: false, gas: false, solid: false },
@@ -64,7 +64,7 @@ class PhysicsSandbox {
         
         // Sound system
         this.sounds = {
-            place: this.createSound(200, 0.1),
+            //place: this.createSound(200, 0.1),
             erase: this.createSound(100, 0.1),
             explosion: this.createSound(80, 0.3),
             electric: this.createSound(1000, 0.05)
@@ -164,7 +164,7 @@ class PhysicsSandbox {
         // Wind control button
         document.getElementById('windControl').addEventListener('click', (e) => {
             this.windForce.x = this.windForce.x > 0 ? -this.windForce.x : Math.abs(this.windForce.x) || 2;
-            e.target.textContent = this.windForce.x > 0 ? '💨 RÜZGAR →' : '💨 RÜZGAR ←';
+            e.target.textContent = this.windForce.x > 0 ? '💨 WIND →' : '💨 WIND ←';
         });
         
         // Magnetic field control
@@ -188,7 +188,7 @@ class PhysicsSandbox {
         // Time control
         document.getElementById('timeControl').addEventListener('click', (e) => {
             this.timeDirection *= -1;
-            e.target.textContent = this.timeDirection > 0 ? '⏰ ZAMAN' : '⏪ GERİ';
+            e.target.textContent = this.timeDirection > 0 ? '⏰ TIME' : '⏪ REVERSE';
             e.target.style.backgroundColor = this.timeDirection > 0 ? '#444' : '#0066ff';
         });
         
@@ -201,7 +201,7 @@ class PhysicsSandbox {
         // Pause button
         document.getElementById('pauseBtn').addEventListener('click', (e) => {
             this.isPaused = !this.isPaused;
-            e.target.textContent = this.isPaused ? 'BAŞLAT' : 'DURAKLAT';
+            e.target.textContent = this.isPaused ? 'RESUME' : 'PAUSE';
         });
         
         // Save/Load buttons
@@ -441,12 +441,12 @@ class PhysicsSandbox {
                     if (distance <= halfBrush) {
                         const currentCell = this.grid[y][x];
                         
-                        // Sadece boş alanlara veya değiştirilebilir elementlere yerleştir
+                        // Only place in empty areas or replaceable elements
                         if (currentCell.type === 'empty' || this.canReplace(currentCell.type, this.selectedElement)) {
-                            // Ateş için rastgele yaşam süresi
+                            // Random lifetime for fire - shorter duration
                             let lifetime = this.elements[this.selectedElement].lifetime || 0;
                             if (this.selectedElement === 'fire') {
-                                lifetime = Math.random() * 10 + 5; // 5-15 arası rastgele
+                                lifetime = Math.random() * 5 + 3; // 3-8 random range (much shorter)
                             }
                             
                             this.grid[y][x] = {
@@ -589,7 +589,7 @@ class PhysicsSandbox {
                     distance <= explosionRadius && Math.random() > distance / explosionRadius) {
                     
                     if (Math.random() > 0.7) {
-                        this.grid[y][x] = { type: 'fire', lifetime: 20, temperature: 200 };
+                        this.grid[y][x] = { type: 'fire', lifetime: 8, temperature: 200 };
                     } else {
                         this.grid[y][x] = { type: 'empty', lifetime: 0, temperature: 20 };
                     }
@@ -1780,7 +1780,7 @@ class PhysicsSandbox {
         if (element.flammable && cellTemp > this.getIgnitionTemperature(cell.type)) {
             const igniteChance = (cellTemp - this.getIgnitionTemperature(cell.type)) * 0.01;
             if (Math.random() < igniteChance) {
-                newGrid[y][x] = { type: 'fire', lifetime: 15 + Math.random() * 10, temperature: 200 };
+                newGrid[y][x] = { type: 'fire', lifetime: 6 + Math.random() * 4, temperature: 200 };
                 return;
             }
         }
@@ -1888,11 +1888,11 @@ class PhysicsSandbox {
                         }
                         return;
                     } else if (this.elements[neighbor.type]?.flammable && Math.random() > 0.85) {
-                        // Spread fire to flammable materials
-                        newGrid[ny][nx] = { type: 'fire', lifetime: 30, temperature: 200 };
+                        // Spread fire to flammable materials - shorter lifetime
+                        newGrid[ny][nx] = { type: 'fire', lifetime: 12, temperature: 200 };
                     } else if (neighbor.type === 'oil' && Math.random() > 0.7) {
-                        // Oil burns more easily
-                        newGrid[ny][nx] = { type: 'fire', lifetime: 40, temperature: 250 };
+                        // Oil burns more easily - but still shorter
+                        newGrid[ny][nx] = { type: 'fire', lifetime: 15, temperature: 250 };
                     }
                 }
             }
@@ -1900,74 +1900,87 @@ class PhysicsSandbox {
     }
     
     spreadFire(x, y, newGrid) {
-        // Fire spreading logic with more realistic behavior
-        for (let dy = -1; dy <= 1; dy++) {
-            for (let dx = -1; dx <= 1; dx++) {
-                if (dx === 0 && dy === 0) continue;
-                
-                const nx = x + dx;
-                const ny = y + dy;
-                if (this.isValidPosition(nx, ny)) {
-                    const neighbor = this.grid[ny][nx];
-                    const element = this.elements[neighbor.type];
+        // Fire spreading logic with more realistic behavior and safety checks
+        try {
+            for (let dy = -1; dy <= 1; dy++) {
+                for (let dx = -1; dx <= 1; dx++) {
+                    if (dx === 0 && dy === 0) continue;
                     
-                    if (element?.flammable) {
-                        // Higher chance to spread upward (fire rises)
-                        let spreadChance = 0.15;
-                        if (dy < 0) spreadChance *= 2; // Upward spread more likely
-                        if (dy > 0) spreadChance *= 0.5; // Downward spread less likely
+                    const nx = x + dx;
+                    const ny = y + dy;
+                    if (this.isValidPosition(nx, ny) && this.grid[ny] && this.grid[ny][nx] && 
+                        newGrid[ny] && newGrid[ny][nx]) {
                         
-                        // Different materials have different ignition chances
-                        if (neighbor.type === 'plant') spreadChance *= 1.5;
-                        if (neighbor.type === 'oil') spreadChance *= 2.5;
-                        if (neighbor.type === 'wood') spreadChance *= 1.2;
-                        if (neighbor.type === 'gas') spreadChance *= 3;
+                        const neighbor = this.grid[ny][nx];
+                        const element = this.elements[neighbor.type];
                         
-                        if (Math.random() < spreadChance) {
-                            const baseLifetime = neighbor.type === 'oil' ? 50 : 
-                                               neighbor.type === 'gas' ? 30 :
-                                               neighbor.type === 'plant' ? 25 : 20;
+                        if (element?.flammable && newGrid[ny][nx].type !== 'fire') {
+                            // Higher chance to spread upward (fire rises)
+                            let spreadChance = 0.15;
+                            if (dy < 0) spreadChance *= 2; // Upward spread more likely
+                            if (dy > 0) spreadChance *= 0.5; // Downward spread less likely
                             
-                            newGrid[ny][nx] = { 
-                                type: 'fire', 
-                                lifetime: baseLifetime + Math.random() * 10, 
-                                temperature: 200 + Math.random() * 50
-                            };
+                            // Different materials have different ignition chances
+                            if (neighbor.type === 'plant') spreadChance *= 1.5;
+                            if (neighbor.type === 'oil') spreadChance *= 2.5;
+                            if (neighbor.type === 'wood') spreadChance *= 1.2;
+                            if (neighbor.type === 'gas') spreadChance *= 3;
+                            
+                            if (Math.random() < spreadChance) {
+                                const baseLifetime = neighbor.type === 'oil' ? 15 : 
+                                                   neighbor.type === 'gas' ? 10 :
+                                                   neighbor.type === 'plant' ? 8 : 6;
+                                
+                                newGrid[ny][nx] = { 
+                                    type: 'fire', 
+                                    lifetime: baseLifetime + Math.random() * 4,
+                                    temperature: 200 + Math.random() * 50
+                                };
+                            }
                         }
                     }
                 }
             }
+        } catch (error) {
+            console.warn('SpreadFire error:', error);
         }
     }
     
     createSteam(x, y, newGrid) {
-        // Create steam around fire location
-        for (let dy = -1; dy <= 1; dy++) {
-            for (let dx = -1; dx <= 1; dx++) {
-                const nx = x + dx;
-                const ny = y + dy;
-                if (nx >= 0 && nx < this.gridWidth && ny >= 0 && ny < this.gridHeight) {
-                    if (this.isEmpty(nx, ny) && Math.random() > 0.8) {
-                        newGrid[ny][nx] = { type: 'steam', lifetime: 40, temperature: 100 };
+        // Create steam around fire location with safety checks
+        try {
+            for (let dy = -1; dy <= 1; dy++) {
+                for (let dx = -1; dx <= 1; dx++) {
+                    const nx = x + dx;
+                    const ny = y + dy;
+                    if (this.isValidPosition(nx, ny) && newGrid[ny] && newGrid[ny][nx]) {
+                        if (newGrid[ny][nx].type === 'empty' && Math.random() > 0.8) {
+                            newGrid[ny][nx] = { type: 'steam', lifetime: 40, temperature: 100 };
+                        }
                     }
                 }
             }
+        } catch (error) {
+            console.warn('CreateSteam error:', error);
         }
     }
     
     handleSpecialInteractions(x, y, cell, newGrid) {
-        const neighbors = this.getNeighbors(x, y);
-        
-        // Lava interactions
-        if (cell.type === 'lava') {
-            for (const neighbor of neighbors) {
-                const {nx, ny, neighborCell} = neighbor;
-                if (neighborCell.type === 'water') {
-                    // Lava + water = steam + stone
-                    newGrid[ny][nx] = { type: 'steam', lifetime: 60, temperature: 150 };
-                    if (Math.random() > 0.5) {
-                        newGrid[y][x] = { type: 'stone', lifetime: 0, temperature: 100 };
-                    }
+        try {
+            const neighbors = this.getNeighbors(x, y);
+            
+            // Lava interactions
+            if (cell.type === 'lava') {
+                for (const neighbor of neighbors) {
+                    const {nx, ny, neighborCell} = neighbor;
+                    if (!newGrid[ny] || !newGrid[ny][nx]) continue;
+                    
+                    if (neighborCell.type === 'water') {
+                        // Lava + water = steam + stone
+                        newGrid[ny][nx] = { type: 'steam', lifetime: 60, temperature: 150 };
+                        if (Math.random() > 0.5) {
+                            newGrid[y][x] = { type: 'stone', lifetime: 0, temperature: 100 };
+                        }
                 } else if (neighborCell.type === 'ice') {
                     // Lava melts ice instantly
                     newGrid[ny][nx] = { type: 'steam', lifetime: 80, temperature: 120 };
@@ -2068,6 +2081,8 @@ class PhysicsSandbox {
         if (cell.type === 'plasma') {
             for (const neighbor of neighbors) {
                 const {nx, ny, neighborCell} = neighbor;
+                if (!newGrid[ny] || !newGrid[ny][nx]) continue;
+                
                 if (neighborCell.type === 'metal' && Math.random() > 0.9) {
                     newGrid[ny][nx] = { type: 'lava', lifetime: 0, temperature: 400 };
                 } else if (neighborCell.type === 'water' && Math.random() > 0.85) {
@@ -2076,6 +2091,9 @@ class PhysicsSandbox {
                     newGrid[ny][nx] = { type: 'water', lifetime: 0, temperature: 80 };
                 }
             }
+        }
+        } catch (error) {
+            console.warn('Special interactions error:', error);
         }
     }
     
@@ -2111,7 +2129,7 @@ class PhysicsSandbox {
                     
                     if (Math.random() < force * 0.8) {
                         if (Math.random() > 0.6) {
-                            newGrid[ny][nx] = { type: 'fire', lifetime: 20, temperature: 300 };
+                            newGrid[ny][nx] = { type: 'fire', lifetime: 6, temperature: 300 };
                         } else {
                             newGrid[ny][nx] = { type: 'empty', lifetime: 0, temperature: 20 };
                         }
@@ -2132,7 +2150,7 @@ class PhysicsSandbox {
                 
                 if (this.isValidPosition(nx, ny) && distance <= explosionRadius) {
                     if (Math.random() > 0.3) {
-                        newGrid[ny][nx] = { type: 'fire', lifetime: 15, temperature: 250 };
+                        newGrid[ny][nx] = { type: 'fire', lifetime: 5, temperature: 250 };
                     }
                 }
             }
@@ -2215,8 +2233,8 @@ class PhysicsSandbox {
                     this.particles = [];
                 }
             } catch (error) {
-                console.error('Dosya yüklenirken hata:', error);
-                alert('Geçersiz dosya formatı!');
+                console.error('File loading error:', error);
+                alert('Invalid file format!');
             }
         };
         reader.readAsText(file);
@@ -2414,9 +2432,9 @@ class PhysicsSandbox {
         
         const avgTemp = tempCount > 0 ? Math.round(totalTemp / tempCount) : 20;
         
-        document.getElementById('elementCount').textContent = `Elementler: ${elementCount}`;
+        document.getElementById('elementCount').textContent = `Elements: ${elementCount}`;
         document.getElementById('fpsCounter').textContent = `FPS: ${this.fps}`;
-        document.getElementById('temperatureInfo').textContent = `Sıcaklık: ${avgTemp}°C`;
+        document.getElementById('temperatureInfo').textContent = `Temperature: ${avgTemp}°C`;
     }
 }
 
