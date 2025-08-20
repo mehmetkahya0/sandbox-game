@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Physics Sandbox Game</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <div class="toolbar">
+            <h1>SANDBOX</h1>
+            <div class="element-buttons">
+                <button class="element-btn active" data-element="dirt">TOPRAK</button>
+                <button class="element-btn" data-element="water">SU</button>
+                <button class="element-btn" data-element="fire">ATEŞ</button>
+                <button class="element-btn" data-element="plant">BİTKİ</button>
+                <button class="element-btn" data-element="stone">TAŞ</button>
+                <button class="element-btn" data-element="sand">KUM</button>
+                <button class="element-btn" data-element="steam">BUHAR</button>
+                <button class="element-btn" data-element="oil">PETROL</button>
+                <button class="element-btn" data-element="ice">BUZ</button>
+                <button class="element-btn" data-element="lava">LAV</button>
+                <button class="element-btn" data-element="acid">ASİT</button>
+                <button class="element-btn" data-element="metal">METAL</button>
+                <button class="element-btn" data-element="wood">AHŞAP</button>
+                <button class="element-btn" data-element="gunpowder">BARUT</button>
+                <button class="element-btn" data-element="electricity">ELEKTRİK</button>
+                <button class="element-btn" data-element="virus">VİRÜS</button>
+                <button class="element-btn" data-element="magnet">MIKNATIZ</button>
+                <button class="element-btn" data-element="gas">GAZ</button>
+                <button class="element-btn" data-element="plasma">PLAZMA</button>
+            </div>
+            <div class="tool-buttons">
+                <button class="tool-btn" data-tool="brush" title="Fırça">🖌️</button>
+                <button class="tool-btn" data-tool="eraser" title="Silgi">🧽</button>
+                <button class="tool-btn" data-tool="eyedropper" title="Pipet">💧</button>
+                <button class="tool-btn" data-tool="line" title="Çizgi">📏</button>
+                <button class="tool-btn" data-tool="explosion" title="Patlama">💥</button>
+                <button class="tool-btn" data-tool="rectangle" title="Dikdörtgen">⬜</button>
+                <button class="tool-btn" data-tool="circle" title="Daire">⭕</button>
+                <button class="tool-btn" data-tool="gravity" title="Yerçekimi">🌍</button>
+                <button class="tool-btn" data-tool="wind" title="Rüzgar">💨</button>
+                <button class="tool-btn" data-tool="vacuum" title="Vakum">🌪️</button>
+                <button class="tool-btn" data-tool="heat" title="Isıtıcı">🔥</button>
+                <button class="tool-btn" data-tool="cool" title="Soğutucu">❄️</button>
+            </div>
+            <div class="controls">
+                <button id="clearBtn">TEMİZLE</button>
+                <button id="pauseBtn">DURAKLAT</button>
+                <button id="saveBtn">KAYDET</button>
+                <button id="loadBtn">YÜKLE</button>
+                <button id="reverseGravity">⬆️ TERS YÇ</button>
+                <button id="timeControl">⏰ ZAMAN</button>
+                <button id="windControl">💨 RÜZGAR</button>
+                <button id="magneticField">🧲 MANYETİK</button>
+                <button id="randomMode">🎲 RASTGELE</button>
+                <label>
+                    Fırça: 
+                    <input type="range" id="brushSize" min="1" max="20" value="3">
+                    <span id="brushSizeValue">3</span>
+                </label>
+                <label>
+                    Hız: 
+                    <input type="range" id="speedControl" min="1" max="10" value="5">
+                    <span id="speedValue">5</span>
+                </label>
+                <label>
+                    Basınç: 
+                    <input type="range" id="pressureControl" min="1" max="10" value="5">
+                    <span id="pressureValue">5</span>
+                </label>
+                <label>
+                    Rüzgar: 
+                    <input type="range" id="windStrength" min="0" max="10" value="0">
+                    <span id="windValue">0</span>
+                </label>
+            </div>
+        </div>
+        <canvas id="gameCanvas" width="800" height="600"></canvas>
+        <div class="info">
+            <p>🎮 <strong>Yeni:</strong> Mouse basılı tut = Sürekli akıt! Rüzgar, Mıknatıs, Vakum araçları!</p>
+            <p>🧪 <strong>Özel:</strong> Mıknatıs metalleri çeker, Gaz yanıcı, Plazma her şeyi eritir</p>
+            <p>⚡ <strong>Araçlar:</strong> Isıtıcı/Soğutucu sıcaklık değiştirir, Vakum elementleri çeker</p>
+        </div>
+        <div class="status-bar">
+            <span id="elementCount">Elementler: 0</span>
+            <span id="fpsCounter">FPS: 60</span>
+            <span id="temperatureInfo">Sıcaklık: 20°C</span>
+            <span id="windInfo">Rüzgar: ⬅️➡️</span>
+            <span id="modeInfo">Mod: Normal</span>
+        </div>
+        <input type="file" id="fileInput" style="display: none;" accept=".json">
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>

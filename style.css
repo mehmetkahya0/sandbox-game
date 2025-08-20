@@ -1,0 +1,265 @@
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Press Start 2P', monospace;
+    color: #ffffff;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    image-rendering: pixelated;
+    image-rendering: -moz-crisp-edges;
+    image-rendering: crisp-edges;
+}
+
+.container {
+    background: #2a2a2a;
+    border: 4px solid #555;
+    border-style: outset;
+    border-radius: 0;
+    padding: 16px;
+    box-shadow: 
+        inset 2px 2px 0px #404040,
+        inset -2px -2px 0px #1a1a1a,
+        4px 4px 0px #000000;
+}
+
+.toolbar {
+    margin-bottom: 12px;
+    text-align: center;
+}
+
+.toolbar h1 {
+    margin-bottom: 16px;
+    font-size: 16px;
+    color: #00ff00;
+    text-shadow: 2px 2px 0px #008800;
+    letter-spacing: 2px;
+}
+
+.element-buttons {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 4px;
+    justify-content: center;
+    margin-bottom: 12px;
+    max-width: 480px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.tool-buttons {
+    display: flex;
+    gap: 6px;
+    justify-content: center;
+    margin-bottom: 12px;
+    flex-wrap: wrap;
+}
+
+.tool-btn {
+    background: #333;
+    border: 2px solid #555;
+    border-style: outset;
+    color: white;
+    padding: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    min-height: 32px;
+    min-width: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.tool-btn:hover {
+    background: #444;
+    border-style: inset;
+}
+
+.tool-btn.active {
+    background: #555;
+    border: 2px solid #00ff00;
+    border-style: inset;
+    box-shadow: inset 0 0 6px #00ff0088;
+}
+
+.element-btn {
+    background: #444;
+    border: 2px solid #666;
+    border-style: outset;
+    color: white;
+    padding: 6px 4px;
+    cursor: pointer;
+    transition: none;
+    font-size: 9px;
+    font-family: 'Press Start 2P', monospace;
+    text-align: center;
+    min-height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.element-btn:hover {
+    background: #555;
+    border-style: inset;
+}
+
+.element-btn:active {
+    background: #333;
+    border-style: inset;
+}
+
+.element-btn.active {
+    background: #666;
+    border: 2px solid #ffff00;
+    border-style: inset;
+    color: #ffff00;
+    box-shadow: inset 0 0 8px #ffff0088;
+}
+
+.controls {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.controls button {
+    background: #444;
+    border: 2px solid #666;
+    border-style: outset;
+    color: white;
+    padding: 6px 12px;
+    cursor: pointer;
+    font-family: 'Press Start 2P', monospace;
+    font-size: 8px;
+    min-height: 32px;
+}
+
+.controls button:hover {
+    background: #555;
+    border-style: inset;
+}
+
+.controls button:active {
+    background: #333;
+    border-style: inset;
+}
+
+.controls label {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 8px;
+    color: #cccccc;
+}
+
+#brushSize {
+    width: 60px;
+    height: 16px;
+    background: #333;
+    border: 2px inset #666;
+}
+
+#gameCanvas {
+    border: 4px solid #666;
+    border-style: inset;
+    background: #000;
+    cursor: crosshair;
+    display: block;
+    margin: 0 auto;
+    image-rendering: pixelated;
+    image-rendering: -moz-crisp-edges;
+    image-rendering: crisp-edges;
+    box-shadow: 
+        inset 2px 2px 0px #333,
+        inset -2px -2px 0px #999,
+        4px 4px 0px #000000;
+}
+
+.info {
+    margin-top: 12px;
+    text-align: center;
+    font-size: 8px;
+    color: #aaaaaa;
+    line-height: 1.6;
+    max-width: 600px;
+}
+
+.info p {
+    margin-bottom: 4px;
+}
+
+.status-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 8px;
+    padding: 6px 12px;
+    background: #1a1a1a;
+    border: 2px inset #333;
+    font-size: 8px;
+    color: #00ff00;
+}
+
+.status-bar span {
+    flex: 1;
+    text-align: center;
+}
+
+#brushSizeValue {
+    background: #333;
+    border: 1px inset #666;
+    padding: 2px 6px;
+    min-width: 20px;
+    text-align: center;
+    font-size: 8px;
+    color: #00ff00;
+}
+
+/* Responsive design */
+@media (max-width: 900px) {
+    .container {
+        margin: 8px;
+        padding: 12px;
+    }
+    
+    #gameCanvas {
+        width: 100%;
+        height: auto;
+        max-width: 800px;
+    }
+    
+    .element-buttons {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 6px;
+        max-width: 240px;
+    }
+    
+    .element-btn {
+        padding: 6px 2px;
+        font-size: 8px;
+        min-height: 36px;
+    }
+    
+    .toolbar h1 {
+        font-size: 12px;
+    }
+    
+    .controls button {
+        padding: 4px 8px;
+        font-size: 6px;
+    }
+    
+    .info {
+        font-size: 6px;
+    }
+}

@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Physics Test</title>
+    <style>
+        body { margin: 0; padding: 20px; background: #222; color: white; font-family: Arial; }
+        canvas { border: 1px solid #444; background: #000; }
+        .controls { margin: 10px 0; }
+        button { margin: 5px; padding: 10px; background: #444; color: white; border: none; cursor: pointer; }
+        button.active { background: #666; }
+    </style>
+</head>
+<body>
+    <div class="controls">
+        <button class="element-btn active" data-element="dirt">DIRT</button>
+        <button class="element-btn" data-element="water">WATER</button>
+        <button class="element-btn" data-element="sand">SAND</button>
+        <button id="clearBtn">CLEAR</button>
+    </div>
+    <canvas id="gameCanvas" width="800" height="600"></canvas>
+    <script>
+        console.log("Starting physics test...");
+        
+        class SimplePhysics {
+            constructor() {
+                console.log("Initializing...");
+                this.canvas = document.getElementById('gameCanvas');
+                this.ctx = this.canvas.getContext('2d');
+                this.width = this.canvas.width;
+                this.height = this.canvas.height;
+                
+                this.gridWidth = Math.floor(this.width / 2);
+                this.gridHeight = Math.floor(this.height / 2);
+                this.grid = this.createGrid();
+                
+                this.selectedElement = 'dirt';
+                this.brushSize = 3;
+                this.isMouseDown = false;
+                this.mouseX = 0;
+                this.mouseY = 0;
+                
+                this.elements = {
+                    empty: { color: [0, 0, 0, 0], density: 0 },
+                    dirt: { color: [101, 67, 33, 255], density: 1.5 },
+                    water: { color: [64, 164, 223, 200], density: 1.0, liquid: true },
+                    sand: { color: [238, 203, 173, 255], density: 1.6 }
+                };
+                
+                this.initEvents();
+                this.gameLoop();
+                console.log("Physics test initialized!");
+            }
+            
+            createGrid() {
+                const grid = [];
+                for (let y = 0; y < this.gridHeight; y++) {
+                    grid[y] = [];
+                    for (let x = 0; x < this.gridWidth; x++) {
+                        grid[y][x] = { type: 'empty' };
+                    }
+                }
+                return grid;
+            }
+            
+            initEvents() {
+                // Element selection
+                document.querySelectorAll('.element-btn').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        document.querySelectorAll('.element-btn').forEach(b => b.classList.remove('active'));
+                        btn.classList.add('active');
+                        this.selectedElement = btn.dataset.element;
+                    });
+                });
+                
+                // Clear button
+                document.getElementById('clearBtn').addEventListener('click', () => {
+                    this.grid = this.createGrid();
+                });
+                
+                // Mouse events
+                this.canvas.addEventListener('mousedown', (e) => {
+                    this.isMouseDown = true;
+                    this.updateMousePosition(e);
+                    this.placeElement();
+                });
+                
+                this.canvas.addEventListener('mousemove', (e) => {
+                    this.updateMousePosition(e);
+                    if (this.isMouseDown) {
+                        this.placeElement();
+                    }
+                });
+                
+                this.canvas.addEventListener('mouseup', () => {
+                    this.isMouseDown = false;
+                });
+            }
+            
+            updateMousePosition(e) {
+                const rect = this.canvas.getBoundingClientRect();
+                this.mouseX = Math.floor((e.clientX - rect.left) / 2);
+                this.mouseY = Math.floor((e.clientY - rect.top) / 2);
+            }
+            
+            placeElement() {
+                const halfBrush = Math.floor(this.brushSize / 2);
+                
+                for (let dy = -halfBrush; dy <= halfBrush; dy++) {
+                    for (let dx = -halfBrush; dx <= halfBrush; dx++) {
+                        const x = this.mouseX + dx;
+                        const y = this.mouseY + dy;
+                        
+                        if (x >= 0 && x < this.gridWidth && y >= 0 && y < this.gridHeight) {
+                            const distance = Math.sqrt(dx * dx + dy * dy);
+                            if (distance <= halfBrush) {
+                                this.grid[y][x] = { type: this.selectedElement };
+                            }
+                        }
+                    }
+                }
+            }
+            
+            updatePhysics() {
+                const newGrid = [];
+                for (let y = 0; y < this.gridHeight; y++) {
+                    newGrid[y] = [];
+                    for (let x = 0; x < this.gridWidth; x++) {
+                        newGrid[y][x] = { ...this.grid[y][x] };
+                    }
+                }
+                
+                // Simple gravity for non-empty cells
+                for (let y = this.gridHeight - 2; y >= 0; y--) {
+                    for (let x = 0; x < this.gridWidth; x++) {
+                        const cell = this.grid[y][x];
+                        if (cell.type !== 'empty') {
+                            const below = this.grid[y + 1][x];
+                            if (below.type === 'empty') {
+                                // Move down
+                                newGrid[y + 1][x] = { ...cell };
+                                newGrid[y][x] = { type: 'empty' };
+                            } else if (cell.type === 'water' && below.type !== 'water') {
+                                // Water flows sideways
+                                const directions = [1, -1];
+                                for (const dx of directions) {
+                                    if (x + dx >= 0 && x + dx < this.gridWidth && 
+                                        this.grid[y][x + dx].type === 'empty') {
+                                        newGrid[y][x + dx] = { ...cell };
+                                        newGrid[y][x] = { type: 'empty' };
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                
+                this.grid = newGrid;
+            }
+            
+            render() {
+                // Clear canvas
+                this.ctx.fillStyle = '#000';
+                this.ctx.fillRect(0, 0, this.width, this.height);
+                
+                // Render grid
+                for (let y = 0; y < this.gridHeight; y++) {
+                    for (let x = 0; x < this.gridWidth; x++) {
+                        const cell = this.grid[y][x];
+                        if (cell.type !== 'empty') {
+                            const element = this.elements[cell.type];
+                            if (element) {
+                                this.ctx.fillStyle = `rgba(${element.color[0]}, ${element.color[1]}, ${element.color[2]}, ${(element.color[3] || 255) / 255})`;
+                                this.ctx.fillRect(x * 2, y * 2, 2, 2);
+                            }
+                        }
+                    }
+                }
+            }
+            
+            gameLoop() {
+                this.updatePhysics();
+                this.render();
+                requestAnimationFrame(() => this.gameLoop());
+            }
+        }
+        
+        // Initialize when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            new SimplePhysics();
+        });
+    </script>
+</body>
+</html>
